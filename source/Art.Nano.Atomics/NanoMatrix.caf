@@ -12,10 +12,10 @@ class NanoMatrix extends &NanoAtomicBase
       y_out: y1 + yx * x_in + yy * y_in
 
   @createAtomic
-    fields:   :x1 :y2 :xx :yy :xy :yx
-    defaults: 0   0   1   1   0   0
+    fields:   :xx :yy :xy :yx :x1 :y2
+    defaults: 1   1   0   0   0   0
 
-  @nanoMatrixTransform: (x1, y1, xx, yy, xy, yx, x, y) ->
+  @nanoMatrixTransform: (xx, yy, xy, yx, x1, y1, x, y) ->
     nanoPointWithReusableResult
       x1 + xx * x + xy * y
       y1 + yx * x + yy * y

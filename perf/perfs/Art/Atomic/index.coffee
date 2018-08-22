@@ -4,5 +4,4 @@
 module.exports = require './namespace'
 module.exports
 .addModules
-  Color: require './Color'
   Point: require './Point'

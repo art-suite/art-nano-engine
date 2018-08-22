@@ -1,0 +1,24 @@
+import &StandardImport
+
+suite:
+  basics: ->
+    benchmark "warmup", ->
+      nanoMatrix()
+      nanoMatrixWithReusableResult 1 2
+      point()
+
+    benchmark "nanoMatrix()", -> nanoMatrix()
+    benchmark "nanoMatrixWithReusableResult()", -> nanoMatrixWithReusableResult 1, 2
+
+    benchmark "ArtAtomic.matrix()", ->
+      matrix()
+
+  math: ->
+    artAtomicP1 = point 1 2
+    artAtomicM1 = matrix()
+
+    benchmark 'artAtomicM1.transform artAtomicP1' -> artAtomicM1.transform artAtomicP1
+    benchmark 'nanoMatrixTransform' ->
+      {x, y} = nanoMatrixTransform 1 1 0 0 1 1 1 2
+      null
+
