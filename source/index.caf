@@ -1,0 +1,5 @@
+&ArtStandardLib.merge
+  Atomics: &ArtNanoAtomics
+  &ArtNanoAtomics
+# Engine: &ArtNanoEngine
+# Engine: &ArtNanoEngine

@@ -1,24 +1,27 @@
 import &StandardImport
 
-class NanoRectangle
+class NanoRectangle extends &NanoAtomicBase
+  @createAtomic
+    defaults: 0 0 100 100
+    fields:   :x :y :w :h
 
-  @defaultNanoRectangle = default =
-    x: 0
-    y: 0
-    w: 0
-    h: 0
+  # @defaultNanoRectangle = default =
+  #   x: 0
+  #   y: 0
+  #   w: 0
+  #   h: 0
 
-  reusableResult = merge default
+  # reusableResult = merge default
 
-  withReusableResult = (x, y, w, h) ->
-    reusableResult.x = x - 0
-    reusableResult.y = y - 0
-    reusableResult.w = w - 0
-    reusableResult.h = h - 0
-    reusableResult
+  # withReusableResult = (x, y, w, h) ->
+  #   reusableResult.x = x - 0
+  #   reusableResult.y = y - 0
+  #   reusableResult.w = w - 0
+  #   reusableResult.h = h - 0
+  #   reusableResult
 
-  @nanoRectangle: (a, b, c, d) ->
-    switch
-    when !a?          then default
-    when a is Number  then withReusableResult a, b, c, d
-    else throw new Error "not supported yet"
+  # @nanoRectangle: (a, b, c, d) ->
+  #   switch
+  #   when !a?          then default
+  #   when a is Number  then withReusableResult a, b, c, d
+  #   else throw new Error "not supported yet"

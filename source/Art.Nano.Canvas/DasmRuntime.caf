@@ -4,22 +4,49 @@ class DasmRuntime extends BaseClass
 
   constructor: ->
     @reset()
+    @_dasmStack = new Float32Array maxStackSize = 256
 
   reset: ->
-    @_bitmap = null
+    @_target = null
     @drawMatrix = @defaultNanoMatrix
     @parentSize = nanoPoint 100
-    @drawArea = nanoRect 0 0 @_parentSize_x, @_parentSize_y
+    @initForDasmEvaluation()
 
-  @getter
+  initForDasmEvaluation: ->
+    @_clipping = false
+    @area = nanoRectangle 0 0 @_parentSize_x, @_parentSize_y
+    @baseDrawMatrix = @drawMatrix
+
+  @getter "target dasmStack clipping",
     parentSize: -> nanoPoint @_parentSize_x, @_parentSize_y
+    area:   -> nanoRectangle
+      @_area_x
+      @_area_y
+      @_area_w
+      @_area_h
+
+    drawMatrix: -> nanoMatrix
+      @_drawMatrix_sx
+      @_drawMatrix_sy
+      @_drawMatrix_shx
+      @_drawMatrix_shx
+      @_drawMatrix_tx
+      @_drawMatrix_ty
+
+    baseDrawMatrix: -> nanoMatrix
+      @_baseDrawMatrix_sx
+      @_baseDrawMatrix_sy
+      @_baseDrawMatrix_shx
+      @_baseDrawMatrix_shx
+      @_baseDrawMatrix_tx
+      @_baseDrawMatrix_ty
 
   @setter
-    drawArea: (obj) ->
-      @_drawArea_x = obj.x
-      @_drawArea_y = obj.y
-      @_drawArea_w = obj.w
-      @_drawArea_h = obj.h
+    area: (obj) ->
+      @_area_x = obj.x
+      @_area_y = obj.y
+      @_area_w = obj.w
+      @_area_h = obj.h
 
     parentSize: (obj) ->
       @_parentSize_x = obj.x
@@ -33,6 +60,14 @@ class DasmRuntime extends BaseClass
       @_drawMatrix_tx  = obj.tx
       @_drawMatrix_ty  = obj.ty
 
+    baseDrawMatrix: (obj) ->
+      @_baseDrawMatrix_sx  = obj.sx
+      @_baseDrawMatrix_sy  = obj.sy
+      @_baseDrawMatrix_shx = obj.shx
+      @_baseDrawMatrix_shx = obj.shx
+      @_baseDrawMatrix_tx  = obj.tx
+      @_baseDrawMatrix_ty  = obj.ty
+
   {opPush0,
   opPushHalf,
   opPush2,
@@ -40,24 +75,69 @@ class DasmRuntime extends BaseClass
   opAdd,
   opSub,
   opMul,
-  opDiv} = &DasmOpcodes.opCodeMap
+  opDiv,
+  opDebug,
+  opResetArea,
+  opResetMatrix} = &DasmOpcodes.opCodeMap
 
-  dasmStack = new Float32Array maxStackSize = 256
+  resetArea: ->
+    @_area_x = 0
+    @_area_y = 0
+    @_area_w = @_parentSize_x
+    @_area_h = @_parentSize_y
+
+  resetDrawMatrix: ->
+    @drawMatrix = @baseDrawMatrix
+
+  resetClipping: ->
+    if @clipping
+      @target.closeClipping()
+      @clipping = false
 
   dasmEval: (commands, floatConstants, stringConstants) ->
-    i = 0
+    commandPos = 0
     stackPos = 0
     numCommands = commands.length
-    @drawArea
+    {target, dasmStack} = @
 
-    while i < numCommands
-      switch commands[i]
+    # lastClippingInfo = null
+    @initForDasmEvaluation()
+
+    while commandPos < numCommands
+      switch commands[commandPos]
+        # when opReset
+
+        when opClip
+          @resetClipping
+          target.setDrawMatrix @drawMatrix
+          target.beginPath()
+          @executePath()
+          target.clip()
+          clipping = true
+
+        when opResetClip    then @resetClipping()
+        # when opResetProps
+        when opResetArea    then @resetArea()
+        when opResetMatrix  then @resetDrawMatrix()
+
+        when opDebug
+          log {}
+            stack: array i til stackPos with dasmStack[i]
+            @parentSize
+            @area
+            @drawMatrix
+            @commandPos
+
         when opPush0    then dasmStack[stackPos++] = 0
         when opPush1    then dasmStack[stackPos++] = 1
         when opPush2    then dasmStack[stackPos++] = 2
         when opPushHalf then dasmStack[stackPos++] = .5
-        when opAdd      then dasmStack[stackPost++] = dasmStack[stackPost--] + dasmStack[stackPost--]
-        when opSub      then dasmStack[stackPost++] = dasmStack[stackPost--] + dasmStack[stackPost--]
-        when opMul      then dasmStack[stackPost++] = dasmStack[stackPost--] + dasmStack[stackPost--]
-        when opDiv      then dasmStack[stackPost++] = dasmStack[stackPost--] + dasmStack[stackPost--]
-      i++
+        when opAdd      then dasmStack[stackPos++] = dasmStack[--stackPos] + dasmStack[--stackPos]
+        when opSub      then dasmStack[stackPos++] = dasmStack[--stackPos] - dasmStack[--stackPos]
+        when opMul      then dasmStack[stackPos++] = dasmStack[--stackPos] * dasmStack[--stackPos]
+        when opDiv      then dasmStack[stackPos++] = dasmStack[--stackPos] / dasmStack[--stackPos]
+
+      commandPos++
+
+    @resetClipping()
+    null

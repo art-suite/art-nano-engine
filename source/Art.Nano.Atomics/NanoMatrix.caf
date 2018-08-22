@@ -1,9 +1,8 @@
 import &StandardImport, &NanoPoint
 
-class NanoMatrix
-
+class NanoMatrix extends &NanoAtomicBase
   ##
-    Naming Key:
+    Field Naming Key:
 
       First-character:  output point-slot in transform
       Second-character: multiplied-by-value-from-input-point
@@ -12,32 +11,11 @@ class NanoMatrix
       x_out: x1 + xx * x_in + xy * y_in
       y_out: y1 + yx * x_in + yy * y_in
 
-  @defaultNanoMatrix = default =
-    x1: 0 # e.g. translate-x  (tx)
-    y1: 0 # e.g. translate-y  (ty)
-    xx: 1 # e.g. scale-x      (sx)
-    yy: 1 # e.g. scale-y      (sy)
-    xy: 0 # e.g. skew-x       (shx)
-    yx: 0 # e.g. skew-y       (shy)
-
-  reusableResult = merge default
-
-  withReusableResult = (x1, y1, xx, yy, xy, yx) ->
-    reusableResult.x1 = x1 - 0
-    reusableResult.y1 = y1 - 0
-    reusableResult.xx = xx - 0
-    reusableResult.yy = yy - 0
-    reusableResult.xy = xy - 0
-    reusableResult.yx = yx - 0
-    reusableResult
-
-  @nanoMatrix: (a, b, c, d, e, f) ->
-    switch
-    when !a?          then default
-    when a is Number  then withReusableResult a, b, c, d, e, f
-    else throw new Error "not supported yet"
+  @createAtomic
+    fields:   :x1 :y2 :xx :yy :xy :yx
+    defaults: 0   0   1   1   0   0
 
   @nanoMatrixTransform: (x1, y1, xx, yy, xy, yx, x, y) ->
-    nanoPoint
-      x: x1 + xx * x + xy * y
-      y: y1 + yx * x + yy * y
+    nanoPointWithReusableResult
+      x1 + xx * x + xy * y
+      y1 + yx * x + yy * y

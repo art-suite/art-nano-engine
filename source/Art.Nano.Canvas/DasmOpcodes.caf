@@ -29,7 +29,7 @@ import &StandardImport
     :opSetShadow
 
     # RESETS
-    :opReset        # triggers all the other resets
+    :opReset        # triggers all the other resets + opRectangle
     :opResetClip
     :opResetArea
     # :opResetShape # same as opRectangle

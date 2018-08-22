@@ -1,0 +1,46 @@
+import &StandardImport
+
+
+########################
+  perf-test
+nanoPointAddBaseline = (a_x, a_y, b_x, b_y) ->
+  x: a_x + b_x
+  y: a_y + a_y
+
+nanoPointGtBaseline = (a_x, a_y, b_x, b_y) ->
+  a_x > b_x && a_y > a_y
+
+suite:
+  basics: ->
+    benchmark "warmup", ->
+      nanoPoint()
+      nanoPointWithReusableResult 1 2
+      point()
+
+    benchmark "nanoPoint()", -> nanoPoint()
+    benchmark "nanoPointWithReusableResult()", -> nanoPointWithReusableResult 1, 2
+
+    benchmark "ArtAtomic.point()", ->
+      point()
+
+  math: ->
+    artAtomicP1 = point 1 2
+    artAtomicP2 = point 3 4
+    benchmark "warmup", ->
+      {x, y} = nanoPointAdd 1 2 3 4
+      {x, y} = nanoPointAddBaseline 1 2 3 4
+      {x, y} = artAtomicP1.add artAtomicP2
+
+    benchmark "manual add", ->
+      x = 1 + 3
+      y = 2 + 4
+
+    benchmark "nanoPointAddBaseline()", ->
+      {x, y} = nanoPointAddBaseline 1 2 3 4
+      null
+
+    benchmark "nanoPointAdd()", ->
+      {x, y} = nanoPointAdd 1 2 3 4
+      null
+
+    benchmark "artAtomicP1.add()", -> artAtomicP1.add artAtomicP2

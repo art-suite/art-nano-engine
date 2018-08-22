@@ -2,72 +2,8 @@ import &StandardImport
 
 class NanoPoint extends &NanoAtomicBase
   @createAtomic
-    default: x: 0, y: 0
-    fields: :x :y
+    defaults: 0   0
+    fields:   :x  :y
 
   @nanoPoint0 = x: 0, y: 0
   @nanoPoint1 = x: 1, y: 1
-  # @defaultNanoPoint = default = @nanoPoint0
-
-  # reusableResult = merge default
-
-  # withReusableResult = (x, y) ->
-  #   reusableResult.x = x - 0
-  #   reusableResult.y = y - 0
-  #   reusableResult
-
-  # @nanoPoint: (a, b) =>
-  #   switch
-  #   when !a?          then default
-  #   when a is Number  then withReusableResult a, b ? a
-  #   else throw new Error "not supported yet"
-
-  # @nanoConstructor: @nanoPoint
-
-  ######################
-    OPERATORS
-  ######################
-  ## could write generator postCreate...
-  ## customize for each Art.Nano.Atomic (just different field-counts, really)
-  # createNanoApplicator = (f) -> (a, b) ->
-  #   withReusableResult
-  #     f a
-  #     f b
-
-  # createNanoCombiner = (f) -> (a1, a2, b1, b2) ->
-  #   withReusableResult
-  #     f a1, b1
-  #     f a2, b2
-
-  # # true iff all are true
-  # createNanoAndTester = (f) -> (a, b) ->
-  #   f a
-  #   && f b
-
-  # # true iff any are true
-  # createNanoOrTester = (f) -> (a, b) ->
-  #   f a
-  #   || f b
-
-  # ## same for any Art.Nano.Atomic - except the function name
-  # @nanoPointFloor:    createNanoApplicator Math.floor
-  # @nanoPointAdd:      createNanoCombiner   (a, b) -> a + b
-  # @nanoPointSub:      createNanoCombiner   (a, b) -> a - b
-  # @nanoPointMul:      createNanoCombiner   (a, b) -> a * b
-  # @nanoPointDiv:      createNanoCombiner   (a, b) -> a / b
-  # @nanoPointEq:       createNanoAndTester  (a, b) -> a == b
-  # @nanoPointNeq:      createNanoOrTester   (a, b) -> a != b
-  # @nanoPointGt:       createNanoAndTester  (a, b) -> a > b
-  # @nanoPointGte:      createNanoAndTester  (a, b) -> a >= b
-  # @nanoPointLt:       createNanoAndTester  (a, b) -> a < b
-  # @nanoPointLte:      createNanoAndTester  (a, b) -> a <= b
-
-  ########################
-    perf-test
-  @nanoPointAddBaseline: (a_x, a_y, b_x, b_y) ->
-    x: a_x + b_x
-    y: a_y + a_y
-
-  @nanoPointGtBaseline:  (a_x, a_y, b_x, b_y) ->
-    a_x > b_x && a_y > a_y
-

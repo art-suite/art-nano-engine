@@ -1,4 +1,4 @@
-require '../index.caf'
+console.log "wassthis", &index
 &art-testbench/testing
 .init
   synchronous: true
