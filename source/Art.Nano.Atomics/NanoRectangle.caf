@@ -1,0 +1,24 @@
+import &StandardImport
+
+class NanoRectangle
+
+  @defaultNanoRectangle = default =
+    x: 0
+    y: 0
+    w: 0
+    h: 0
+
+  reusableResult = merge default
+
+  withReusableResult = (x, y, w, h) ->
+    reusableResult.x = x - 0
+    reusableResult.y = y - 0
+    reusableResult.w = w - 0
+    reusableResult.h = h - 0
+    reusableResult
+
+  @nanoRectangle: (a, b, c, d) ->
+    switch
+    when !a?          then default
+    when a is Number  then withReusableResult a, b, c, d
+    else throw new Error "not supported yet"

@@ -1,0 +1,21 @@
+import &StandardImport
+
+class Element
+
+  constuctor: ->
+    @_currentLocation_x = 0
+    @_currentLocation_y = 0
+    @_currentSize_x = 0
+    @_currentSize_y = 0
+
+    @_elementToParentMatrix_sx = 1
+    @_elementToParentMatrix_sy = 1
+    @_elementToParentMatrix_shx = 0
+    @_elementToParentMatrix_shy = 0
+    @_elementToParentMatrix_tx = 0
+    @_elementToParentMatrix_ty = 0
+
+    # I'd like the option to inline up to, say. array-size-5s for _drawConstants and _drawCommands.
+    @_drawConstants = null    # float32 array
+    @_drawCommands = null     # uint8 array
+    @_drawStrings = null

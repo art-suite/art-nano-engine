@@ -1,0 +1,57 @@
+import &StandardImport, &Tools
+
+class NanoBitmap extends BaseClass
+
+  constructor: (a, b)->
+
+    @size = nanoPoint 0
+    @_htmlImageElement = @_canvas = null
+
+    switch
+    when isNumber b       then @_initNewCanvas a, b
+    when isImage  a       then @_initFromImage a
+    when isCanvas a       then @_initFromCanvas a, b
+    when a is NanoBitmap  then @_initClone a
+
+  @setter
+    size: (obj) ->
+      @_size_x = obj.x
+      @_size_y = obj.y
+
+  ###########################
+    ToPerfTest
+  ###########################
+  setWithNanoPoint:    (x, y) -> @size = nanoPoint x, y
+  setWithoutNanoPoint: (x, y) ->
+    @_size_x = x
+    @_size_y = y
+
+  ###########################
+    Initializers
+  ###########################
+  _initNewCanvas: (x, y) ->
+    {x, y} = nanoPointFloor x, y
+
+    unless nanoPointGt x, y, 0, 0
+      throw new Error "invalid size=(#{x}, #{y}) for Art.Nano.Canvas.Bitmap"
+
+    @_initFromCanvas newCanvas x, y
+
+  _initFromCanvas: (canvas, contextAttributes) ->
+    @_canvas = canvas
+    @size = nanoPoint
+      @_canvas.width
+      @_canvas.height
+
+    @_initContext contextAttributes
+
+  _initFromImage: (image) ->
+    @size = nanoPoint
+      image.naturalWidth  ? image.width
+      image.naturalHeight ? image.height
+
+    @_htmlImageElement = image
+
+  # override for WebGL
+  _initContext: (contextAttributes)->
+    @_context = @_canvas?.getContext "2d", contextAttributes

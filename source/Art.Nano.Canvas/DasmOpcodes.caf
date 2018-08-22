@@ -1,0 +1,121 @@
+import &StandardImport
+{}
+  opCodeList =
+    :opDebug
+
+    # Draw pixels
+    :opFill
+    :opStroke
+    :opDrawBitmap
+
+    # DRAW CHILDREN
+    :opDrawChild
+    :opDrawChildren
+
+    # SET LINE PROPS
+    :opSetLineWidth
+    :opLineCap
+    :opLineJoin
+
+    # COMPISITE DRAW PROPS
+    :opSetCompositeMode
+    :opSetColor
+    :opSetColors
+    :opSetColorsWithPositions
+    :opRepeatColors
+    :opSetTo
+    :opSetFrom
+    :opSetRadial
+    :opSetShadow
+
+    # RESETS
+    :opReset        # triggers all the other resets
+    :opResetClip
+    :opResetArea
+    # :opResetShape # same as opRectangle
+    :opResetProps
+    :opResetMatrix
+
+    # CLIP
+    :opClip
+
+    # SET DYNAMIC VARIABLES
+    :opSetLocation
+    :opSetSize
+
+    # PUSH BUILT-IN CONSTANTS
+    :opPush0
+    :opPushHalf
+    :opPush1
+    :opPush2
+    :opPushPoint0
+    :opPushPoint1
+    :opPushPoint2
+    :opPushPointHalf
+
+    # PUSH USER-CONSTANT-FLOAT32
+    :opPushNumber
+    :opPushPoint
+
+    # MATH
+    :opAdd
+    :opSub
+    :opMul
+    :opDiv
+    :opMax
+    :opMin
+    :opAddPoint
+    :opSubPoint
+    :opMulPoint
+    :opDivPoint
+    :opMaxPoint
+    :opMinPoint
+
+    # PUSH DYNAMIC VALUES
+    :opPushLocationX
+    :opPushLocationY
+    :opPushSizeX
+    :opPushSizeY
+    :opPushCenterX
+    :opPushCenterY
+    :opPushTop
+    :opPushLeft
+    :opPushRight
+    :opPushBottom
+    # :opPushTopLeft
+    # :opPushBottomRight
+    # :opPushBitmapSize
+    :opPushBitmapSizeX
+    :opPushBitmapSizeY
+    # :opPushParentSize
+    :opPushParentSizeX
+    :opPushParentSizeY
+
+    # stack - do we even need these?
+    :opPop
+    :opPopPoint
+    :opResetStack
+
+    # MATRIX
+    :opTranslate
+    :opRotate
+    :opScale
+    :opSkew
+
+    # SHAPE
+    :opCircle
+    :opRectangle
+    :opText
+    :opCurvedRectangle
+    :opBeginPath
+    :opClosePath
+    :opPathMoveTo
+    :opPathLineTo
+    :opPathQuadraticCurveTo
+    :opPathBezierCurveTo
+    :opPathArtTo
+    :opPathArc
+    :opPathArcCcw
+    :opPathRect
+
+  opCodeMap: object code, i in opCodeList with i

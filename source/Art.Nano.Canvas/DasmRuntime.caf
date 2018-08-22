@@ -1,0 +1,63 @@
+import &StandardImport
+
+class DasmRuntime extends BaseClass
+
+  constructor: ->
+    @reset()
+
+  reset: ->
+    @_bitmap = null
+    @drawMatrix = @defaultNanoMatrix
+    @parentSize = nanoPoint 100
+    @drawArea = nanoRect 0 0 @_parentSize_x, @_parentSize_y
+
+  @getter
+    parentSize: -> nanoPoint @_parentSize_x, @_parentSize_y
+
+  @setter
+    drawArea: (obj) ->
+      @_drawArea_x = obj.x
+      @_drawArea_y = obj.y
+      @_drawArea_w = obj.w
+      @_drawArea_h = obj.h
+
+    parentSize: (obj) ->
+      @_parentSize_x = obj.x
+      @_parentSize_y = obj.y
+
+    drawMatrix: (obj) ->
+      @_drawMatrix_sx  = obj.sx
+      @_drawMatrix_sy  = obj.sy
+      @_drawMatrix_shx = obj.shx
+      @_drawMatrix_shx = obj.shx
+      @_drawMatrix_tx  = obj.tx
+      @_drawMatrix_ty  = obj.ty
+
+  {opPush0,
+  opPushHalf,
+  opPush2,
+  opPush1,
+  opAdd,
+  opSub,
+  opMul,
+  opDiv} = &DasmOpcodes.opCodeMap
+
+  dasmStack = new Float32Array maxStackSize = 256
+
+  dasmEval: (commands, floatConstants, stringConstants) ->
+    i = 0
+    stackPos = 0
+    numCommands = commands.length
+    @drawArea
+
+    while i < numCommands
+      switch commands[i]
+        when opPush0    then dasmStack[stackPos++] = 0
+        when opPush1    then dasmStack[stackPos++] = 1
+        when opPush2    then dasmStack[stackPos++] = 2
+        when opPushHalf then dasmStack[stackPos++] = .5
+        when opAdd      then dasmStack[stackPost++] = dasmStack[stackPost--] + dasmStack[stackPost--]
+        when opSub      then dasmStack[stackPost++] = dasmStack[stackPost--] + dasmStack[stackPost--]
+        when opMul      then dasmStack[stackPost++] = dasmStack[stackPost--] + dasmStack[stackPost--]
+        when opDiv      then dasmStack[stackPost++] = dasmStack[stackPost--] + dasmStack[stackPost--]
+      i++

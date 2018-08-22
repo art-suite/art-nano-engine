@@ -1,0 +1,16 @@
+
+class Tools
+  @newCanvas: (x, y) ->
+    if global.document
+      @_canvas = document.createElement 'canvas'
+      @_canvas.width  = x
+      @_canvas.height = y
+
+    else
+      unless global.HTMLCanvasElement
+        throw new Error "global.HTMLCanvasElement not found; try: HTMLCanvasElement = require 'canvas'"
+
+      @_canvas = new global.HTMLCanvasElement x, y
+
+  @isImage:  (e) -> e? && ((e is type = global.HTMLImageElement ) || e instanceof type)
+  @isCanvas: (e) -> e? && ((e is type = global.HTMLCanvasElement) || e instanceof type)
