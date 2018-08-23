@@ -8,7 +8,7 @@ class DasmRuntime extends BaseClass
 
   reset: ->
     @_target = null
-    @drawMatrix = @defaultNanoMatrix
+    @drawMatrix = nanoMatrixDefault
     @parentSize = nanoPoint 100
     @initForDasmEvaluation()
 
@@ -78,6 +78,8 @@ class DasmRuntime extends BaseClass
   opDiv,
   opDebug,
   opResetArea,
+  opClip,
+  opResetClip,
   opResetMatrix} = &DasmOpcodes.opCodeMap
 
   resetArea: ->
@@ -94,6 +96,14 @@ class DasmRuntime extends BaseClass
       @target.closeClipping()
       @clipping = false
 
+  clip: ->
+    @resetClipping
+    @target.setDrawMatrix @drawMatrix
+    @target.beginPath()
+    @executePath()
+    @target.clip()
+    @clipping = true
+
   dasmEval: (commands, floatConstants, stringConstants) ->
     commandPos = 0
     stackPos = 0
@@ -106,17 +116,10 @@ class DasmRuntime extends BaseClass
     while commandPos < numCommands
       switch commands[commandPos]
         # when opReset
-
-        when opClip
-          @resetClipping
-          target.setDrawMatrix @drawMatrix
-          target.beginPath()
-          @executePath()
-          target.clip()
-          clipping = true
-
-        when opResetClip    then @resetClipping()
         # when opResetProps
+
+        when opClip         then @clip()
+        when opResetClip    then @resetClipping()
         when opResetArea    then @resetArea()
         when opResetMatrix  then @resetDrawMatrix()
 
@@ -126,7 +129,7 @@ class DasmRuntime extends BaseClass
             @parentSize
             @area
             @drawMatrix
-            @commandPos
+            commandPos
 
         when opPush0    then dasmStack[stackPos++] = 0
         when opPush1    then dasmStack[stackPos++] = 1

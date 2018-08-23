@@ -3,5 +3,4 @@
 
 module.exports = require './namespace'
 module.exports
-require './Atomic'
 require './Nano'

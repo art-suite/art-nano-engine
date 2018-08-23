@@ -4,4 +4,5 @@
 module.exports = require './namespace'
 module.exports
 require './Atomics'
+require './Canvas'
 require './Engine'

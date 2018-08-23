@@ -4,4 +4,5 @@
 module.exports = (require '../namespace').addNamespace 'Art.Nano', class Nano extends Neptune.PackageNamespace
   @version: require('../../../package.json').version
 require './Atomics/namespace';
+require './Canvas/namespace';
 require './Engine/namespace'
