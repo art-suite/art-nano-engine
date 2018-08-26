@@ -120,24 +120,28 @@ setupInterleavedVmData = ->
 setupInterleavedVmData()
 parallelDataVmWithConstNamedOpCodes = &ConstNamedOpCodes.createVm parallelInstructions, floatArray, stack
 
-parallelDataVm = ->
-  i = 0
-  sp = 0
-  fp = 0
-  instructionsLength = parallelInstructions.length
+# &createParallelDataVm.init {parallelInstructions, floatArray, stack}
 
-  stack[sp++] = 0
-  while i < instructionsLength
-    # if instruction == 0       then 1
-    # else if instruction == 1  then stack[sp++] = floatArray[fp++]
-    # else if instruction == 2  then a = stack[--sp]; stack[sp - 1] += a
+parallelDataVm = &createParallelDataVm
+  # ->
+  #   i = 0
+  #   sp = 0
+  #   fp = 0
+  #   instructionsLength = parallelInstructions.length
 
-    switch parallelInstructions[i++]
-    when 0  then 1
-    when 1  then stack[sp++] = floatArray[fp++]
-    when 2  then a = stack[--sp]; stack[sp - 1] += a
+  #   stack[sp++] = 0
+  #   while i < instructionsLength
+  #     # if instruction == 0       then 1
+  #     # else if instruction == 1  then stack[sp++] = floatArray[fp++]
+  #     # else if instruction == 2  then a = stack[--sp]; stack[sp - 1] += a
 
-  stack[0]
+  #     switch parallelInstructions[i++]
+  #     when 0  then 1
+  #     when 1  then stack[sp++] = floatArray[fp++]
+  #     when 2  then a = stack[--sp]; stack[sp - 1] += a
+
+  #   stack[0]
+# &createParallelDataVm.init parallelInstructions, floatArray, stack
 
 
 parallelDataVmWithNamedOpCodes = ->
@@ -168,7 +172,7 @@ suite:
         interleavedVmWithNamedOpCodes()
         runBasicSum()
 
-    test "validate parallelDataVm gets the correct result", -> assert.eq runBasicSum(), parallelDataVm()
+    test "validate parallelDataVm gets the correct result", -> assert.eq runBasicSum(), parallelDataVm parallelInstructions, floatArray, stack
     test "validate parallelDataVmWithConstNamedOpCodes gets the correct result", -> assert.eq runBasicSum(), parallelDataVmWithConstNamedOpCodes()
 
 
@@ -181,9 +185,10 @@ suite:
       benchmark "simulated interleavedVmWithNamedOpCodes" interleavedVmWithNamedOpCodes
 
     parallelDataVm: ->
-      benchmark "withNumberedOpCodes" parallelDataVm
+      benchmark "withNumberedOpCodes" -> parallelDataVm parallelInstructions, floatArray, stack
       benchmark "withNamedOpCodes" parallelDataVmWithNamedOpCodes
       benchmark "withConstNamedOpCodes" parallelDataVmWithConstNamedOpCodes
+
 
   discardedOption: ->
 

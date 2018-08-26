@@ -6,9 +6,9 @@ webpack:
   # common properties are merged into each target's properties
   common:
     mode: "development"
-    devServer:
+    # devServer:
       # start with: lt -s imikimi --port 8080
-      public: :witty-liger-27.localtunnel.me
+      # public: :witty-liger-27.localtunnel.me
 
   # each target's individual properties
   targets:

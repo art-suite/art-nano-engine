@@ -11,6 +11,15 @@ class NanoMatrix extends &NanoAtomicBase
       x_out: x1 + xx * x_in + xy * y_in
       y_out: y1 + yx * x_in + yy * y_in
 
+    Mapping with old names:
+
+      xx: :sx
+      yy: :sy
+      xy: :shx
+      yx: :shy
+      x1: :tx
+      y2: :ty
+
   @createAtomic
     fields:   :xx :yy :xy :yx :x1 :y2
     defaults: 1   1   0   0   0   0
@@ -19,3 +28,35 @@ class NanoMatrix extends &NanoAtomicBase
     nanoPointWithReusableResult
       x1 + xx * x + xy * y
       y1 + yx * x + yy * y
+
+  @nanoMatrixMul: (a_xx, a_yy, a_xy, a_yx, a_x1, a_y1, b_xx, b_yy, b_xy, b_yx, b_x1, b_y1) =>
+    @nanoMatrixWithReusableResult
+      a_xx * b_xx  +  a_yx * b_xy
+      a_xy * b_yx  +  a_yy * b_yy
+      a_xy * b_xx  +  a_yy * b_xy
+      a_xx * b_yx  +  a_yx * b_yy
+      a_x1 * b_xx  +  a_y1 * b_xy  +  b_x1
+      a_x1 * b_yx  +  a_y1 * b_yy  +  b_y1
+
+  @nanoMatrixTranslate: (xx, yy, xy, yx, x1, y1, tx, ty) ->
+    @nanoMatrixWithReusableResult xx, yy, xy, yx, x1 + tx, y1 + ty
+
+  @nanoMatrixRotate: (xx, yy, xy, yx, x1, y1, radians) ->
+    cr = Math.cos radians
+    sr = Math.sin radians
+    @nanoMatrixWithReusableResult
+      xx * cr - yx * sr
+      xy * sr + yy * cr
+      xy * cr - yy * sr
+      xx * sr + yx * cr
+      x1 * cr - y1 * sr
+      x1 * sr + y1 * cr
+
+  @nanoMatrixScale: (xx, yy, xy, yx, x1, y1, sx, sy) ->
+    @nanoMatrixWithReusableResult
+      xx * sx
+      yy * sy
+      xy * sx
+      yx * sy
+      x1 * sx
+      y1 * sy

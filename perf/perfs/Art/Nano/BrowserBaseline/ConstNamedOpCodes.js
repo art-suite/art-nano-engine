@@ -1,9 +1,14 @@
+"use strict";
 let opCodes = [0, 1, 2];
-const [noOp, pushOp, sumOp] = opCodes;
+let [noOp, pushOp, sumOp] = opCodes;
+
+let {log} = require('art-standard-lib');
+
 
 module.exports = {createVm: function (parallelInstructions, floatArray, stack) {
+  log("create const with strict");
   return function() {
-    let i, sp, fp, instructionsLength, instruction, a;
+    let i, sp, fp, instructionsLength, a;
     i = 0;
     sp = 0;
     fp = 0;

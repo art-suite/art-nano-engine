@@ -1,0 +1,16 @@
+[noOp, pushOp, sumOp] = array til 3
+
+(parallelInstructions, floatArray, stack) ->
+  i = 0
+  sp = 0
+  fp = 0
+  instructionsLength = parallelInstructions.length
+
+  stack[sp++] = 0
+  while i < instructionsLength
+    switch parallelInstructions[i++]
+    when noOp   then 1
+    when pushOp then stack[sp++] = floatArray[fp++]
+    when sumOp  then a = stack[--sp]; stack[sp - 1] += a
+
+  stack[0]

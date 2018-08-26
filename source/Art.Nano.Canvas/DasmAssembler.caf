@@ -1,0 +1,10 @@
+import &StandardImport
+
+&DasmOpcodes
+
+class DasmAssembler extends BaseClass
+
+  @assembleDasm: (humanCommands) ->
+    each command in humanCommands
+      [opCode] = command
+      {smallIntCount, floatCount, stringCount} = &DasmOpcodes

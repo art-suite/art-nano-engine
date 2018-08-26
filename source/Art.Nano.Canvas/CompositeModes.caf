@@ -1,0 +1,58 @@
+import &StandardImport
+
+
+compositeModes =
+  # human-friendly names
+  add:                :lighter
+  replace:            :copy
+  normal:             :source-over
+  alphaMask:          :destination-in   # target's color, alpha = intersection
+  targetAlphaMask:    :source-in        # source's color, alpha = intersection
+  inverseAlphaMask:   :destination-out  # target's color, alpha = target - source
+
+  # This was in the old ArtCanvas, but why? Just use the full name.
+  # destOver:           :destination-over
+
+  # Hmm, this was in the old ArtCanvas, but dumb shane, don't re-use the common name
+  # in a different way!
+  # sourceIn:           :source-atop
+
+htmlCanvasCompositeModes = []
+    # common browser support
+    :copy
+    :destination-atop   # color = destination-over, alpha = source
+    :destination-in     # color = target, alpha = intersection
+    :destination-out    # color = target, alpha = target - source
+    :destination-over   # as-if you draw the desintion on top of the source, except you are still only altering the destination's pixels
+    :lighter            # color = source + target, alpha = union
+    :source-atop        # color = source-over, alpha = target
+    :source-in          # color = source, alpha = intersection
+    :source-out         # color = source, alpha = source - target
+    :source-over        # "normal" draw the source OVER the destination (alpha = union)
+
+    # limited browser support
+    # https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation
+
+    :color
+    :color-burn
+    :color-dodge
+    :darken
+    :difference
+    :exclusion
+    :hard-light
+    :hue
+    :lighten
+    :luminosity
+    :multiply
+    :overlay
+    :saturation
+    :screen
+    :soft-light
+    :xor                # alpha = exclusion, colors are not blended
+
+# can use lowerCamelCase or dash-case for compositeModes
+# SBD - I prefer the consistency of using lowerCamelCase for values everywhere.
+object         from htmlCanvasCompositeModes into compositeModes
+object blender from htmlCanvasCompositeModes into compositeModes with-key lowerCamelCase blender
+
+compositeModes

@@ -4,6 +4,7 @@
 module.exports = require './namespace'
 module.exports
 .addModules
-  ArrayBuffer:       require './ArrayBuffer'      
-  ConstNamedOpCodes: require './ConstNamedOpCodes'
-  InlineObjects:     require './InlineObjects'    
+  ArrayBuffer:          require './ArrayBuffer'         
+  ConstNamedOpCodes:    require './ConstNamedOpCodes'   
+  CreateParallelDataVm: require './createParallelDataVm'
+  InlineObjects:        require './InlineObjects'       
