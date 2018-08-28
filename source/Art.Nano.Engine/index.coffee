@@ -4,4 +4,6 @@
 module.exports = require './namespace'
 module.exports
 .addModules
-  Element: require './Element'
+  Element:          require './Element'         
+  ElementDrawMixin: require './ElementDrawMixin'
+  StandardImport:   require './StandardImport'  

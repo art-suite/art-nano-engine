@@ -1,7 +1,7 @@
 &ArtStandardLib.merge
-  Atomics: &ArtNanoAtomics
-  Canvas: &ArtNanoCanvas
+  Atomics:  &ArtNanoAtomics
+  Canvas:   &ArtNanoCanvas
+  Engine:   &ArtNanoEngine
   &ArtNanoAtomics
   &ArtNanoCanvas
-# Engine: &ArtNanoEngine
-# Engine: &ArtNanoEngine
+  &ArtNanoEngine

@@ -1,0 +1,68 @@
+import &StandardImport
+
+class Paths
+
+  @circlePathNano: circlePathNano = (context, x, y, w, h) ->
+    radius = min(w, h) / 2
+    hCenter = x + w / 2
+    vCenter = y + h / 2
+    context.arc hCenter, vCenter, radius, 0, Math.PI*2, true
+    context.closePath()
+
+  @circlePathNano.obtuse = true
+
+  @roundedRectanglePathNano: (context, x, y, w, h, tl, tr, bl, br) ->
+
+    if float32Eq0(tl) && float32Eq0(tr) && float32Eq0(bl) && float32Eq0(br)
+      rectanglePathNano context, x, y, w, h
+
+    else if float32Eq(w, h) &&
+        float32Eq(tl, tr) &&
+        float32Eq(tl, bl) &&
+        float32Eq(tl, br) &&
+        tl >= halfW = w/2
+      # perfect circle
+      circlePathNano contest, x, y, w, h
+
+    else
+      # rounded rectangle
+      maxRadius = min
+        w/2
+        h/2
+
+      bl = bound 0, bl, maxRadius
+      br = bound 0, br, maxRadius
+      tl = bound 0, tl, maxRadius
+      tr = bound 0, tr, maxRadius
+
+      left = x
+      top = y
+      right = x + w
+      bottom = y + h
+
+      context.moveTo left,        top    + tl
+      context.arcTo  left,        top,        left   + tl,  top,          tl
+      context.lineTo right  - tr, top
+      context.arcTo  right,       top,        right,        top    + tr,  tr
+      context.lineTo right,       bottom - br
+      context.arcTo  right,       bottom,     right  - br,  bottom,       br
+      context.lineTo left   + bl, bottom
+      context.arcTo  left,        bottom,     left,         bottom - bl,  bl
+
+      context.closePath()
+
+  @roundedRectanglePathNano.obtuse = true
+
+  @rectanglePathNano: rectanglePathNano = (context, x, y, w, h) ->
+    left = x
+    top = y
+    right = x + w
+    bottom = y + h
+
+    context.moveTo left , top
+    context.lineTo right, top
+    context.lineTo right, bottom
+    context.lineTo left , bottom
+    context.closePath()
+
+  @rectanglePathNano.obtuse = true

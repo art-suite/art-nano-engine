@@ -1,6 +1,6 @@
 import &StandardImport
 
-class Element
+class Element extends &ElementDrawMixin BaseClass
 
   constuctor: ->
     @_currentLocation_x = 0
@@ -23,44 +23,15 @@ class Element
     @_drawFunction = null
     @_children = null
 
-  _draw: (target, p2t_xx, p2t_yy, p2t_xy, p2t_yx, p2t_x1, p2t_y1)->
-    {xx,yy,xy,yx,x1,y1} = nanoMatrixMul
-      @_e2p_xx
-      @_e2p_yy
-      @_e2p_xy
-      @_e2p_yx
-      @_e2p_x1
-      @_e2p_y1
-      p2t_xx
-      p2t_yy
-      p2t_xy
-      p2t_yx
-      p2t_x1
-      p2t_y1
-
-    if @_drawFunction
-      try
-        context = checkoutContext target, @
-        context.initDraw()
-        context.setBaseMatrix xx, yy, xy, yx, x1, y1
-        context.setBaseArea
-          0
-          0
-          @_currentSize_x
-          @_currentSize_y
-
-        @_drawFunction context
-
-      finally
-        checkinContext context
 
 
 
 
-Element
+##
+  Element
 
-  draw: (target, element) ->
-    target.color #ff8
-    target.fill()
-    element.drawChild target, :foobar
+    draw: ->
+      @color #ff8
+      @fill()
+      @drawChild :foobar
 

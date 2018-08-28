@@ -1,0 +1,292 @@
+import &StandardImport, &Paths
+
+class NanoDrawContext extends BaseClass
+
+  [shapeCustom, shapeRectangle, shapeCircle, shapeRoundedRectangle] =
+    array til 4
+
+  constructor: ->
+    @init()
+
+  init: (@_targetNanoBitmap, @_element, xx, yy, xy, yx, x1, y1) ->
+    @_context = @_targetNanoBitmap?._context
+
+    _currentSize_x = _currentSize_y = 100
+    if @_element
+      {_currentSize_x, _currentSize_y} = @_element
+
+    @baseArea   = nanoRectangleWithReusableResult 0, 0, _currentSize_x, _currentSize_y
+    @baseMatrix = nanoMatrixWithReusableResult xx, yy, xy, yx, x1, y1
+
+    @reset()
+
+  reset: ->
+    @resetClip()
+    @resetMatrix()
+    @resetArea()
+    @rectangle()
+
+  ###########
+  # AREA
+  ###########
+  setArea: (@_area_x, @_area_y, @_area_w, @_area_h) ->
+
+  resetArea: -> @setArea @_baseArea_x, @_baseArea_y, @_baseArea_w, @_baseArea_h
+
+  ###########
+  # MATRIX
+  ###########
+
+  @setter
+    matrix: (obj) ->
+      @_matrix_xx = obj.xx - 0
+      @_matrix_yy = obj.yy - 0
+      @_matrix_xy = obj.xy - 0
+      @_matrix_yx = obj.yx - 0
+      @_matrix_x1 = obj.x1 - 0
+      @_matrix_y1 = obj.y1 - 0
+
+    baseArea: (obj) ->
+      @_baseArea_x = obj.x - 0
+      @_baseArea_y = obj.y - 0
+      @_baseArea_w = obj.w - 0
+      @_baseArea_h = obj.h - 0
+
+    baseMatrix: (obj) ->
+      @_baseMatrix_xx = obj.xx - 0
+      @_baseMatrix_yy = obj.yy - 0
+      @_baseMatrix_xy = obj.xy - 0
+      @_baseMatrix_yx = obj.yx - 0
+      @_baseMatrix_x1 = obj.x1 - 0
+      @_baseMatrix_y1 = obj.y1 - 0
+
+  setMatrix: (xx, yy, xy, yx, x1, y1) ->
+    @matrix = nanoMatrixMul
+      @_baseMatrix_xx
+      @_baseMatrix_yy
+      @_baseMatrix_xy
+      @_baseMatrix_yx
+      @_baseMatrix_x1
+      @_baseMatrix_y1
+      xx - 0
+      yy - 0
+      xy - 0
+      yx - 0
+      x1 - 0
+      y1 - 0
+
+    @_context.setTransform
+      @_matrix_xx
+      @_matrix_yy
+      @_matrix_xy
+      @_matrix_yx
+      @_matrix_x1
+      @_matrix_y1
+
+  resetMatrix: ->
+    @_context.setTransform
+      @_baseMatrix_xx
+      @_baseMatrix_xy
+      @_baseMatrix_yx
+      @_baseMatrix_yy
+      @_baseMatrix_x1
+      @_baseMatrix_y1
+
+  translate: (x, y)  ->
+    @matrix = nanoMatrixTranslate # required because HTMLCanvas doesn't transform shadows
+      @_matrix_xx
+      @_matrix_yy
+      @_matrix_xy
+      @_matrix_yx
+      @_matrix_x1
+      @_matrix_y1
+      x
+      y
+    @_context.translate x, y
+
+  rotate: (angle) ->
+    @matrix = nanoMatrixRotate    # required because HTMLCanvas doesn't transform shadows
+      @_matrix_xx
+      @_matrix_yy
+      @_matrix_xy
+      @_matrix_yx
+      @_matrix_x1
+      @_matrix_y1
+      angle
+
+    @_context.rotate angle
+
+  scale: (x, y)  ->
+    @matrix = nanoMatrixScale     # required because HTMLCanvas doesn't transform shadows
+      @_matrix_xx
+      @_matrix_yy
+      @_matrix_xy
+      @_matrix_yx
+      @_matrix_x1
+      @_matrix_y1
+      x
+      y
+    @_context.scale x, y
+
+  ###########################
+    Operations
+  ###########################
+
+  # Draw pixels
+  fill:   ->
+    @prepareDraw()
+    if @_shape == shapeRectangle
+      @_context.fillRect @_area_x, @_area_y, @_area_w, @_area_h
+    else
+      @_context.fill()
+
+  stroke: ->
+    @prepareDraw()
+    if @_shape == shapeRectangle
+      @_context.strokeRect @_area_x, @_area_y, @_area_w, @_area_h
+    else
+      @_context.stroke()
+
+  ##  Although drawImage has other params, I'd like to let
+      the transform/matrix handle translation and scaling.
+      As-for source-area options, I'll add them if needed.
+
+      As-for drawBitmapWithLayout, I think I'll add functions
+      for setting the matrix correctly for the various
+      layout options.
+      In fact, I'll probably make those utilities - so
+      even ArtReact can use them. We'll need that option
+      when we implement multi-touch zoom and pan.
+  drawBitmap: (bitmap) -> @_context.drawImage bitmap, 0, 0
+
+  # SET LINE PROPS
+  :opSetLineWidth
+  :opLineCap
+  :opLineJoin
+
+  # COMPISITE DRAW PROPS
+  setCompositeMode: (compositeMode) ->
+    @_context.globalCompositeOperation = compositeModes[compositeMode] || compositeModes.normal
+
+  :opSetColor
+  :opSetColors
+  :opSetColorsWithPositions
+  :opSetTo
+  :opSetFrom
+  :opSetRadial
+  setShadow: (@_shadowOffset_x, @_shadowOffset_y, @_shadowBlur, @_shadowColor) ->
+
+  prepareDraw: ->
+    {_context} = @
+    if @_shadowColor?
+      ###
+        Shadows seem to ignore scale and rotation transformations.
+
+        It seems someone wanted to enforce consistent shadows while completely breaking
+        the setTransform abstraction. Bah! :)
+
+        I believe this was a design mistake. It introduces inconsistencies both subtle
+        and large. For example, it makes shadow placement vary across devices depending
+        upon their devicePixelsPerPoint. No other draw command works this way.
+
+        Consistent shadows should be up to the programmer, not the drawing engine.
+
+        I believe this hack solves the problem. Shadow SHAPE does obey setTransforms. It
+        is also correctly proporitonal to the shape it is creating a shadow of. Said shape
+        fully obeys setTrasform - including location. Only the vector from the center of
+        the shape to the center of the shadow seems to ignore setTransform.
+         - July 2016, SBD
+
+      _context.shadowColor    = @_shadowColor
+      _context.shadowBlur     = @_shadowBlur
+      {x, y} = nanoMatrixTranslate @_matrix_xx, @_matrix_yy, @_matrix_xy, @_matrix_yx, @_matrix_x1, @_matrix_y1, @_shadowOffset_x, @_shadowOffset_y
+      _context.shadowOffsetX  = x
+      _context.shadowOffsetY  = y
+
+    switch @_shape
+      when shapeCircle
+        circlePathNano @_context, @_area_x, @_area_y, @_area_w, @_area_h
+      when shapeRoundedRectangle
+        roundedRectanglePathNano @_context, @_area_x, @_area_y, @_area_w, @_area_h, @_tlRadius, @_trRadius, @_blRadius, @_brRadius
+
+      # when shapeRectangle # handled in fill/stroke
+      # when shapeCustom    # path should already be ready to go
+
+  resetStyle: ->
+    {_context} = @
+
+    _context.lineWidth  = 1
+    _context.lineCap    = "butt"
+    _context.lineJoin   = "miter"
+    _context.miterLimit = 10
+
+    # if compositeMode && compositeMode != "normal"
+    _context.globalCompositeOperation = compositeModes.normal
+
+    # if opacity < 1
+    _context.globalAlpha = 1
+
+    if @_shadowColor?
+      _context.shadowColor = "transparent"
+      @_shadowColor = null
+      @_shadowBlur = _context.shadowBlur = 0
+      @_shadowOffset_x = _context.shadowOffsetX = 0
+      @_shadowOffset_y = _context.shadowOffsetY = 0
+
+  ###########
+  # CLIPPING
+  ###########
+  clip: ->
+    @resetClip()
+    @_context.save()
+    @_context.clip()
+    @_clipping = true
+
+  resetClip: ->
+    if @_clipping
+      @_context.restore()
+      @_clipping = false
+
+  ###########
+  # text
+  ###########
+
+  ###########
+  # SHAPE
+  ###########
+  rectangle: (a, b, c, d) ->
+    a ?= 0
+    unless b?
+      b = c = d = a
+
+    @_shape = if a != 0 || b != 0 || c != 0 || d != 0
+      shapeRoundedRectangle
+    else
+      shapeRectangle
+
+    @_tlRadius = a - 0
+    @_trRadius = b - 0
+    @_blRadius = c - 0
+    @_brRadius = d - 0
+
+  circle: -> @_shape = shapeCircle
+  ##
+    Notes on DrawArea and Shapes:
+    For simplicity, we'll assume any shape's drawArea is a subset of @area.
+    You can change @area ahead of time, but when you call @fill() or @stroke(),
+    the path should be fully within the current @area - for that is the value
+    which will be unioned with the current drawArea.
+
+    If using @stroke, lineWidth and lineJoin and lineCap options will be taken
+    into account. The resulting altered pixels can go outside @area - as long
+    as the path is fully within.
+
+  beginPath:            -> @_context.beginPath(); @_shape = shapeCustom
+  closePath:            -> @_context.closePath()
+  pathMoveTo:           (x, y) -> @_context.pathMoveTo x, y
+  pathLineTo:           (x, y) -> @_context.pathLineTo x, y
+  pathQuadraticCurveTo: (cp_x, cp_y, to_x, to_y) -> @_context.pathQuadraticCurveTo cp_x, cp_y, to_x, to_y
+  pathBezierCurveTo:    (cp1_x, cp1_y, cp2_x, cp2_y, to_x, to_y) -> @_context.pathBezierCurveTo cp1_x, cp1_y, cp2_x, cp2_y, to_x, to_y
+  pathArtTo:            (p1_x, p1_y, p2_x, p2_y, radius) -> @_context.pathArtTo p1_x, p1_y, p2_x, p2_y, radius
+  pathArc:              (x, y, radius, startAngle, endAngle, counterClockwise) -> @_context.arc x, y, radius, startAngle, endAngle, counterClockwise
+  pathRect:             (x, y, w, h) -> @_context.rect x, y, w, h

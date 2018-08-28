@@ -4,4 +4,4 @@
 module.exports = require './namespace'
 module.exports
 .addModules
-  Test: require './Test'
+  Element: require './Element'
