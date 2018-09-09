@@ -3,13 +3,13 @@
 
 module.exports = require './namespace'
 module.exports
+.includeInNamespace require './Canvas'
 .addModules
-  CompositeModes:  require './CompositeModes' 
-  DasmAssembler:   require './DasmAssembler'  
-  DasmOpcodes:     require './DasmOpcodes'    
-  DasmRuntime:     require './DasmRuntime'    
-  NanoBitmap:      require './NanoBitmap'     
-  NanoDrawContext: require './NanoDrawContext'
-  Paths:           require './Paths'          
-  StandardImport:  require './StandardImport' 
-  Tools:           require './Tools'          
+  CompositeModes: require './CompositeModes'
+  DasmAssembler:  require './DasmAssembler' 
+  DasmOpcodes:    require './DasmOpcodes'   
+  DasmRuntime:    require './DasmRuntime'   
+  NanoBitmap:     require './NanoBitmap'    
+  Paths:          require './Paths'         
+  StandardImport: require './StandardImport'
+  Tools:          require './Tools'         

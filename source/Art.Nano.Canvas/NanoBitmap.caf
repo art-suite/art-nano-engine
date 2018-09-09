@@ -1,4 +1,4 @@
-import &StandardImport, &Tools, {} &compositeModes
+import &StandardImport, &Tools, &ArtBinary, {} &compositeModes
 
 ##
   Design Notes
@@ -33,6 +33,22 @@ class NanoBitmap extends BaseClass
       @_size_x = obj.x
       @_size_y = obj.y
 
+  @getter
+    inspectedObjects: -> @
+
+  toImage: ->
+    nextTick()
+    .then => # use nextTick to ensure all pending draw commands complete before we extract the pixel data
+      if @_htmlImageElement
+        @_htmlImageElement
+      else
+        EncodedImage.toImage @_canvas.toDataURL()
+        .then (image) ->
+          # when we support pointSize:
+          # image.width  = @_pointSize_x
+          # image.height = @_pointSize_y
+          image
+
   ###########################
     ToPerfTest
   ###########################
@@ -48,7 +64,7 @@ class NanoBitmap extends BaseClass
     {x, y} = nanoPointFloor x, y
 
     unless nanoPointGt x, y, 0, 0
-      throw new Error "invalid size=(#{x}, #{y}) for Art.Nano.Canvas.Bitmap"
+      throw new Error "invalid size=(#{x}, #{y}) for Art.Nano.Canvas.NanoBitmap"
 
     @_initFromCanvas newCanvas x, y
 

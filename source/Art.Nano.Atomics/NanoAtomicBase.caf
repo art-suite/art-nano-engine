@@ -47,7 +47,8 @@ class NanoAtomicBase extends BaseObject
 
             createNanoCombiner: function (f) {
               return function (
-                #{(array f in fields with "a_#{f}").join ', '}, #{(array f in fields with "b_#{f}").join ', '}
+                #{(array f in fields with "a_#{f}").join ', '},
+                #{(array f in fields with "b_#{f}").join ', '}
               ) {
                 return withReusableResult(
                   #{(array f in fields with "f(a_#{f}, b_#{f})").join ', '}
@@ -56,23 +57,33 @@ class NanoAtomicBase extends BaseObject
             },
 
             createNanoAndTester: function (f) {
-              return function (#{fields.join ', '})
-                {return #{(array f in fields with "f(#{f})").join ' && '};};
+              return function (
+                #{(array f in fields with "a_#{f}").join ', '},
+                #{(array f in fields with "b_#{f}").join ', '}
+              ) {
+                return #{(array f in fields with "f(a_#{f}, b_#{f})").join ' && '};
+              };
             },
 
             createNanoOrTester: function (f) {
-              return function (#{fields.join ', '})
-                {return #{(array f in fields with "f(#{f})").join ' || '};};
+              return function (
+                #{(array f in fields with "a_#{f}").join ', '},
+                #{(array f in fields with "b_#{f}").join ', '}
+              ) {
+                return #{(array f in fields with "f(a_#{f}, b_#{f})").join ' || '};
+              };
             }
           }
         })
 
+    # generated =
     {withReusableResult,
     nanoConstructor,
     createNanoApplicator,
     createNanoCombiner,
     createNanoAndTester,
     createNanoOrTester} = f reusableResult, defaults
+    # log @name, object f in generated with f.toString()
 
     classMembers = {}
       withReusableResult

@@ -1,31 +1,52 @@
-import &StandardImport
+import &StandardImport, &ElementFactory
 
 class Element extends &ElementDrawMixin BaseClass
 
-  constuctor: ->
-    @_currentLocation_x = 0
-    @_currentLocation_y = 0
-    @_currentSize_x = 0
-    @_currentSize_y = 0
+  @postCreateConcreteClass: ->
+    elementFactory.register @
 
-    @_e2p_xx = 1
-    @_e2p_yy = 1
-    @_e2p_xy = 0
-    @_e2p_yx = 0
-    @_e2p_x1 = 0
-    @_e2p_y1 = 0
+  constructor: (props, children) ->
+    @_reset props, children
+
+  @getter
+    "children"
+    inspectedObjects: ->
+      if @children
+        []
+          :Element
+          array child in @children with child.inspectedObjects
+      else
+        :Element
+
+    bitmap: ->
+      @_draw
+        new NanoBitmap @_currentSize_x, @_currentSize_y
+        1
+        1
+        0
+        0
+        0
+        0
+
+  emptyObject = {}
+  _reset: (props, children) ->
+    props ?= emptyObject
+    @_currentSize_x     = props.size_x            ? 100
+    @_currentSize_y     = props.size_y            ? 100
+
+    @_e2p_xx            = props.e2p_xx            ? 1
+    @_e2p_yy            = props.e2p_yy            ? 1
+    @_e2p_xy            = props.e2p_xy            ? 0
+    @_e2p_yx            = props.e2p_yx            ? 0
+    @_e2p_x1            = props.e2p_x1            ? 0
+    @_e2p_y1            = props.e2p_y1            ? 0
 
     # I'd like the option to inline up to, say. array-size-5s for _drawConstants and _drawCommands.
-    @_drawConstants = null    # float32 array
-    @_drawCommands = null     # uint8 array
-    @_drawStrings = null
-
-    @_drawFunction = null
-    @_children = null
-
-
-
-
+    # @_drawConstants =
+    # @_drawCommands =
+    # @_drawStrings =
+    @_drawFunction      = props.draw              ? 0
+    @_children          = if children?.length > 0 then children else null
 
 ##
   Element

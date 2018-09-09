@@ -1,6 +1,18 @@
-import &StandardImport, &Paths
+import &StandardImport, &ArtNanoCanvas
+import Paths
 
-class NanoDrawContext extends BaseClass
+class DrawContext extends BaseClass
+
+  @_drawContextPool: []
+  @checkoutDrawContext: (bitmap, element, xx, yy, xy, yx, x1, y1) =>
+    if @_drawContextPool.length > 0
+      @_drawContextPool.pop()
+    else
+      new DrawContext
+    .init bitmap, element, xx, yy, xy, yx, x1, y1
+
+  @checkinDrawContext: (drawContext) =>
+    @_drawContextPool.push drawContext
 
   [shapeCustom, shapeRectangle, shapeCircle, shapeRoundedRectangle] =
     array til 4
@@ -22,9 +34,10 @@ class NanoDrawContext extends BaseClass
 
   reset: ->
     @resetClip()
-    @resetMatrix()
+    @resetMatrix() if @_context
     @resetArea()
     @rectangle()
+    @
 
   ###########
   # AREA
@@ -133,8 +146,10 @@ class NanoDrawContext extends BaseClass
   ###########################
 
   # Draw pixels
-  fill:   ->
+  fill: (fillStyle) ->
     @prepareDraw()
+    @_context.fillStyle = fillStyle if fillStyle?
+
     if @_shape == shapeRectangle
       @_context.fillRect @_area_x, @_area_y, @_area_w, @_area_h
     else
@@ -209,8 +224,8 @@ class NanoDrawContext extends BaseClass
       when shapeRoundedRectangle
         roundedRectanglePathNano @_context, @_area_x, @_area_y, @_area_w, @_area_h, @_tlRadius, @_trRadius, @_blRadius, @_brRadius
 
-      # when shapeRectangle # handled in fill/stroke
-      # when shapeCustom    # path should already be ready to go
+    # when shapeRectangle # handled in fill/stroke
+    # when shapeCustom    # path should already be ready to go
 
   resetStyle: ->
     {_context} = @

@@ -1,0 +1,7 @@
+import &StandardImport, &ArtObjectTreeFactory
+
+class ElementFactories
+
+  @addElementFactory: (klass) =>
+    @[klass.name] = createObjectTreeFactory
+      (props, children) -> new klass props, children

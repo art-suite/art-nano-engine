@@ -4,6 +4,9 @@
 module.exports = require './namespace'
 module.exports
 .addModules
+  DrawContext:      require './DrawContext'     
   Element:          require './Element'         
   ElementDrawMixin: require './ElementDrawMixin'
+  ElementFactories: require './ElementFactories'
+  ElementFactory:   require './ElementFactory'  
   StandardImport:   require './StandardImport'  

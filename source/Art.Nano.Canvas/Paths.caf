@@ -22,7 +22,7 @@ class Paths
         float32Eq(tl, br) &&
         tl >= halfW = w/2
       # perfect circle
-      circlePathNano contest, x, y, w, h
+      circlePathNano context, x, y, w, h
 
     else
       # rounded rectangle

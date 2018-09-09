@@ -21,3 +21,9 @@ suite:
     test 'div' -> assert.eq nanoPointDiv(1 2 3 4),
       x: 1/3
       y: 1/2
+
+  inequality: ->
+    test '>'  -> assert.true nanoPointGt  2 2 1 1
+    test '>=' -> assert.true nanoPointGte 1 1 1 1
+    test '<'  -> assert.true nanoPointLt  1 1 2 2
+    test '<=' -> assert.true nanoPointLte 1 1 1 1

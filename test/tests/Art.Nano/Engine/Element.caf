@@ -1,3 +1,16 @@
 import &StandardImport
-suite: ->
-  test 'new Element()' -> new Neptune.Art.Nano.Engine.Element()
+import ElementFactories
+
+suite:
+  factories: ->
+    test 'Element()' -> Element()
+    test 'Element Element()' ->
+      parent = Element child = Element()
+      assert.eq parent.children, [] child
+
+  draw: ->
+    test 'Element draw: ->' ->
+      e = Element
+        draw: ~> @fill #ffff88
+
+      log e.bitmap
