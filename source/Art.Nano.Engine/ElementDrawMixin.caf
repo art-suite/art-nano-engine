@@ -19,11 +19,20 @@ import &StandardImport, &DrawContext
     if @_drawFunction
       # try
       context = checkoutDrawContext target, @, xx, yy, xy, yx, x1, y1
-      log _drawFunction: @_drawFunction.toString()
       @_drawFunction.call context
 
       # finally
       checkinDrawContext context
+
+    each child in @_children
+      child._draw
+        target
+        xx
+        yy
+        xy
+        yx
+        x1
+        y1
 
     target
 

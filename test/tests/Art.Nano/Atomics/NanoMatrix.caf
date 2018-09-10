@@ -1,0 +1,26 @@
+import &StandardImport
+suite:
+  nanoMatrixMul: ->
+    test "transform" ->
+
+      assert.eq
+        nanoMatrixMul
+          1
+          1
+          0
+          0
+          0
+          0
+
+          1
+          1
+          0
+          0
+          10
+          10
+        xx: 1
+        yy: 1
+        xy: 0
+        yx: 0
+        x1: 10
+        y1: 10

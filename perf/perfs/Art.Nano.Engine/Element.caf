@@ -1,0 +1,295 @@
+import &StandardImport
+ElementFactories extract Element
+
+ElementClass = Neptune.Art.Nano.Engine.Element
+
+# Element = &TestElementFactory
+
+if useEs6BasedFactories = false
+  __children = __oneProps = __props = null
+  __factoryAdd = (el) ->
+    if el
+      if el is Object
+        unless __oneProps
+          __oneProps = el
+
+        else unless __props
+          __props = merge __oneProps, el
+
+        else
+          mergeInto __props, el
+
+      else if el is Array
+        numSubEls = el.length
+        i = 0
+        while i < numSubEls
+          __factoryAdd el[i]
+          i++
+
+      else
+        __children ?= []
+        .push el
+
+    null
+
+  Element = (args...) ->
+    __children = __oneProps = __props = null
+    i = 0
+    numArgs = args.length
+    while i < numArgs
+      __factoryAdd args[i]
+      i++
+
+    new ElementClass __props || __oneProps, __children
+
+
+gen = (depth = 1, parentSize = 100, e2p_x1 = 0, e2p_y1 = 0) ->
+  Element
+    {}
+      e2p_x1
+      e2p_y1
+      size_x: parentSize
+      size_y: parentSize
+      draw:
+        if depth % 2 == 1
+          ~> @fill #22dd22
+        else
+          ~> @fill #ffff77
+
+    if depth > 0
+      size = Math.floor (parentSize - 3) / 2
+      depth--
+      [
+        gen depth, size, 1, 1
+        gen depth, size, 2 + size, 1
+        gen depth, size, 1, 2 + size
+        gen depth, size, 2 + size, 2 + size
+      ]
+
+gen_noFactory = (depth = 1, parentSize = 100, e2p_x1 = 0, e2p_y1 = 0) ->
+  new ElementClass
+    {}
+      e2p_x1
+      e2p_y1
+      size_x: parentSize
+      size_y: parentSize
+      draw:
+        if depth % 2 == 1
+          ~> @fill #22dd22
+        else
+          ~> @fill #ffff77
+
+    if depth > 0
+      size = Math.floor (parentSize - 3) / 2
+      depth--
+      [
+        gen_noFactory depth, size, 1, 1
+        gen_noFactory depth, size, 2 + size, 1
+        gen_noFactory depth, size, 1, 2 + size
+        gen_noFactory depth, size, 2 + size, 2 + size
+      ]
+
+gen_noFactory_directInit = (depth = 1, parentSize = 100, e2p_x1 = 0, e2p_y1 = 0) ->
+  e = new ElementClass
+  e.basicInit()
+
+  e.e2p_x1 = e2p_x1
+  e.e2p_y1 = e2p_y1
+  e.size_x = parentSize
+  e.size_y = parentSize
+  e.draw  =
+    if depth % 2 == 1
+      ~> @fill #22dd22
+    else
+      ~> @fill #ffff77
+
+  if depth > 0
+    size = Math.floor (parentSize - 3) / 2
+    depth--
+    e._children = [
+      gen_noFactory_directInit depth, size, 1, 1
+      gen_noFactory_directInit depth, size, 2 + size, 1
+      gen_noFactory_directInit depth, size, 1, 2 + size
+      gen_noFactory_directInit depth, size, 2 + size, 2 + size
+    ]
+  e
+
+drawA = ~> @fill #22dd22
+drawB = ~> @fill #ffff77
+gen_hoisting = (depth = 1, parentSize = 100, e2p_x1 = 0, e2p_y1 = 0) ->
+  Element
+    {}
+      e2p_x1
+      e2p_y1
+      size_x: parentSize
+      size_y: parentSize
+      draw: if depth % 2 == 1
+        drawA
+      else
+        drawB
+    if depth > 0
+      size = Math.floor (parentSize - 3) / 2
+      depth--
+      [
+        gen_hoisting depth, size, 1, 1
+        gen_hoisting depth, size, 2 + size, 1
+        gen_hoisting depth, size, 1, 2 + size
+        gen_hoisting depth, size, 2 + size, 2 + size
+      ]
+
+availableElements = []
+
+checkoutElement = (props, children)->
+  element = if availableElements.length > 0
+    availableElements.pop()
+  else
+    new ElementClass
+
+  .init props, children
+
+checkinElement = (element) ->
+  if children = element._children
+    i = 0
+    end = children.length
+    while i < end
+      checkinElement children[i]
+      i++
+
+  element._children = null
+  availableElements.push element
+
+
+gen_elementPool = (depth = 1, parentSize = 100, e2p_x1 = 0, e2p_y1 = 0) ->
+  checkoutElement
+    {}
+      e2p_x1
+      e2p_y1
+      size_x: parentSize
+      size_y: parentSize
+      draw:
+        if depth % 2 == 1
+          ~> @fill #22dd22
+        else
+          ~> @fill #ffff77
+    if depth > 0
+      size = Math.floor (parentSize - 3) / 2
+      depth--
+      [
+        gen_elementPool depth, size, 1, 1
+        gen_elementPool depth, size, 2 + size, 1
+        gen_elementPool depth, size, 1, 2 + size
+        gen_elementPool depth, size, 2 + size, 2 + size
+      ]
+
+gen_elementPool_hoisting = (depth = 1, parentSize = 100, e2p_x1 = 0, e2p_y1 = 0) ->
+  checkoutElement
+    {}
+      e2p_x1
+      e2p_y1
+      size_x: parentSize
+      size_y: parentSize
+      draw: if depth % 2 == 1
+        drawA
+      else
+        drawB
+    if depth > 0
+      size = Math.floor (parentSize - 3) / 2
+      depth--
+      [
+        gen_elementPool_hoisting depth, size, 1, 1
+        gen_elementPool_hoisting depth, size, 2 + size, 1
+        gen_elementPool_hoisting depth, size, 1, 2 + size
+        gen_elementPool_hoisting depth, size, 2 + size, 2 + size
+      ]
+
+gen_elementPool_directInit_hoisting = (depth = 1, parentSize = 100, e2p_x1 = 0, e2p_y1 = 0) ->
+  e = checkoutElement()
+  e.basicInit()
+
+  e.e2p_x1 = e2p_x1
+  e.e2p_y1 = e2p_y1
+  e.size_x = parentSize
+  e.size_y = parentSize
+  e.draw  =
+    if depth % 2 == 1
+      drawA
+    else
+      drawB
+  if depth > 0
+    size = Math.floor (parentSize - 3) / 2
+    depth--
+    e._children = [
+      gen_elementPool_directInit_hoisting depth, size, 1, 1
+      gen_elementPool_directInit_hoisting depth, size, 2 + size, 1
+      gen_elementPool_directInit_hoisting depth, size, 1, 2 + size
+      gen_elementPool_directInit_hoisting depth, size, 2 + size, 2 + size
+    ]
+  e
+
+
+baseline_hoisting = (depth = 1, parentSize = 100, e2p_x1 = 0, e2p_y1 = 0) ->
+
+  e2p_x1: e2p_x1
+  e2p_y1: e2p_y1
+  size_x: parentSize
+  size_y: parentSize
+  draw:
+    if depth % 2 == 1
+      drawA # ~> @fill #22dd22
+    else
+      drawB # ~> @fill #ffff77
+  children: if depth > 0
+    size = Math.floor (parentSize - 3) / 2
+    depth--
+    [
+      baseline_hoisting depth, size, 1, 1
+      baseline_hoisting depth, size, 2 + size, 1
+      baseline_hoisting depth, size, 1, 2 + size
+      baseline_hoisting depth, size, 2 + size, 2 + size
+    ]
+
+gen_hoistingaseline = (depth = 1, parentSize = 100, e2p_x1 = 0, e2p_y1 = 0) ->
+
+  e2p_x1: e2p_x1
+  e2p_y1: e2p_y1
+  size_x: parentSize
+  size_y: parentSize
+  draw:
+    if depth % 2 == 1
+      ~> @fill #22dd22
+    else
+      ~> @fill #ffff77
+  children: if depth > 0
+    size = Math.floor (parentSize - 3) / 2
+    depth--
+    [
+      gen_hoistingaseline depth, size, 1, 1
+      gen_hoistingaseline depth, size, 2 + size, 1
+      gen_hoistingaseline depth, size, 1, 2 + size
+      gen_hoistingaseline depth, size, 2 + size, 2 + size
+    ]
+
+suite:
+  generateRecursiveElementStructureRun1: ->
+    depth = 2
+    benchmark "gen" -> gen depth
+    benchmark "gen_noFactory" -> gen_noFactory depth
+    benchmark "gen_noFactory_directInit" -> gen_noFactory_directInit depth
+    benchmark "gen_hoisting" -> gen_hoisting depth
+    benchmark "gen_elementPool" -> checkinElement gen_elementPool depth
+    benchmark "gen_elementPool_hoisting" -> checkinElement gen_elementPool_hoisting depth
+    benchmark "gen_elementPool_directInit_hoisting" -> checkinElement gen_elementPool_directInit_hoisting depth
+    benchmark "baseline plain" -> gen_hoistingaseline depth
+    benchmark "baseline_hoisting" -> baseline_hoisting depth
+
+  generateRecursiveElementStructureRun2: ->
+    depth = 2
+    benchmark "gen" -> gen depth
+    benchmark "gen_noFactory" -> gen_noFactory depth
+    benchmark "gen_noFactory_directInit" -> gen_noFactory_directInit depth
+    benchmark "gen_hoisting" -> gen_hoisting depth
+    benchmark "gen_elementPool" -> checkinElement gen_elementPool depth
+    benchmark "gen_elementPool_hoisting" -> checkinElement gen_elementPool_hoisting depth
+    benchmark "gen_elementPool_directInit_hoisting" -> checkinElement gen_elementPool_directInit_hoisting depth
+    benchmark "baseline plain" -> gen_hoistingaseline depth
+    benchmark "baseline_hoisting" -> baseline_hoisting depth

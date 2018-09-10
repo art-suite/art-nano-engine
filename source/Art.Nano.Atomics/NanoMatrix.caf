@@ -21,7 +21,7 @@ class NanoMatrix extends &NanoAtomicBase
       y2: :ty
 
   @createAtomic
-    fields:   :xx :yy :xy :yx :x1 :y2
+    fields:   :xx :yy :xy :yx :x1 :y1
     defaults: 1   1   0   0   0   0
 
   @nanoMatrixTransform: (xx, yy, xy, yx, x1, y1, x, y) ->

@@ -4,3 +4,4 @@
 module.exports = require './namespace'
 module.exports
 require './Art'
+require './Art.Nano.Engine'

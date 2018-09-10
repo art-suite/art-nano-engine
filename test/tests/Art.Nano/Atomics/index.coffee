@@ -4,4 +4,5 @@
 module.exports = require './namespace'
 module.exports
 .addModules
-  NanoPoint: require './NanoPoint'
+  NanoMatrix: require './NanoMatrix'
+  NanoPoint:  require './NanoPoint' 

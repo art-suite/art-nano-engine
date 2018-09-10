@@ -6,7 +6,7 @@ class Element extends &ElementDrawMixin BaseClass
     elementFactory.register @
 
   constructor: (props, children) ->
-    @_reset props, children
+    @init props, children
 
   @getter
     "children"
@@ -29,24 +29,53 @@ class Element extends &ElementDrawMixin BaseClass
         0
 
   emptyObject = {}
-  _reset: (props, children) ->
-    props ?= emptyObject
-    @_currentSize_x     = props.size_x            ? 100
-    @_currentSize_y     = props.size_y            ? 100
+  basicInit: ->
+    @_currentSize_x     = 100
+    @_currentSize_y     = 100
 
-    @_e2p_xx            = props.e2p_xx            ? 1
-    @_e2p_yy            = props.e2p_yy            ? 1
-    @_e2p_xy            = props.e2p_xy            ? 0
-    @_e2p_yx            = props.e2p_yx            ? 0
-    @_e2p_x1            = props.e2p_x1            ? 0
-    @_e2p_y1            = props.e2p_y1            ? 0
+    @_e2p_xx            = 1
+    @_e2p_yy            = 1
+    @_e2p_xy            = 0
+    @_e2p_yx            = 0
+    @_e2p_x1            = 0
+    @_e2p_y1            = 0
 
-    # I'd like the option to inline up to, say. array-size-5s for _drawConstants and _drawCommands.
-    # @_drawConstants =
-    # @_drawCommands =
-    # @_drawStrings =
-    @_drawFunction      = props.draw              ? 0
-    @_children          = if children?.length > 0 then children else null
+    @_drawFunction      = 0
+    @_children          = null
+    @
+
+  init: (props, children) ->
+    unless props || children
+      @basicInit()
+    else
+      props ?= emptyObject
+      @_currentSize_x     = (props.size_x            ? 100) - 0
+      @_currentSize_y     = (props.size_y            ? 100) - 0
+
+      @_e2p_xx            = (props.e2p_xx            ? 1) - 0
+      @_e2p_yy            = (props.e2p_yy            ? 1) - 0
+      @_e2p_xy            = (props.e2p_xy            ? 0) - 0
+      @_e2p_yx            = (props.e2p_yx            ? 0) - 0
+      @_e2p_x1            = (props.e2p_x1            ? 0) - 0
+      @_e2p_y1            = (props.e2p_y1            ? 0) - 0
+
+      @_drawFunction      = props.draw
+      @_children          = if children?.length > 0 then children else null
+      @
+
+  @setter
+    size_x: (v) -> @_currentSize_x = v
+    size_y: (v) -> @_currentSize_y = v
+    e2p_xx: (v) -> @_e2p_xx = v
+    e2p_yy: (v) -> @_e2p_yy = v
+    e2p_xy: (v) -> @_e2p_xy = v
+    e2p_yx: (v) -> @_e2p_yx = v
+    e2p_x1: (v) -> @_e2p_x1 = v
+    e2p_y1: (v) -> @_e2p_y1 = v
+    draw:   (v) -> @_drawFunction = v
+
+
+
 
 ##
   Element
