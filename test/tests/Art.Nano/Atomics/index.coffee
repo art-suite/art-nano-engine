@@ -3,6 +3,3 @@
 
 module.exports = require './namespace'
 module.exports
-.addModules
-  NanoMatrix: require './NanoMatrix'
-  NanoPoint:  require './NanoPoint' 

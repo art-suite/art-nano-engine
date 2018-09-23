@@ -1,6 +1,0 @@
-import &StandardImport
-
-class NanoRectangle extends &NanoAtomicBase
-  @createAtomic
-    defaults: 0 0 100 100
-    fields:   :x :y :w :h

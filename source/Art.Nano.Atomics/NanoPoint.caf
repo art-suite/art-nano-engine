@@ -1,9 +1,0 @@
-import &StandardImport
-
-class NanoPoint extends &NanoAtomicBase
-  @createAtomic
-    defaults: 0   0
-    fields:   :x  :y
-
-  @nanoPoint0 = x: 0, y: 0
-  @nanoPoint1 = x: 1, y: 1

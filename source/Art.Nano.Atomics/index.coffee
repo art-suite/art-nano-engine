@@ -4,8 +4,3 @@
 module.exports = require './namespace'
 module.exports
 .includeInNamespace require './Atomics'
-.addModules
-  NanoAtomicBase: require './NanoAtomicBase'
-  NanoMatrix:     require './NanoMatrix'    
-  NanoPoint:      require './NanoPoint'     
-  NanoRectangle:  require './NanoRectangle' 

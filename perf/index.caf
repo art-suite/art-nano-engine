@@ -2,4 +2,7 @@
 .init
   synchronous: true
   defineTests: ->
-    &perfs
+    []
+      &perfs
+      # This almost works, but... NeptuneNamespaces has issues...
+      # &ArtNanoGeometry/perfs

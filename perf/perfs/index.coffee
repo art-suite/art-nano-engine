@@ -3,5 +3,7 @@
 
 module.exports = require './namespace'
 module.exports
-require './Art'
+.addModules
+  StandardImport: require './StandardImport'
 require './Art.Nano.Engine'
+require './JavaScriptBaseline'

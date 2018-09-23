@@ -3,5 +3,5 @@
 
 module.exports = (require 'neptune-namespaces').addNamespace 'Perfs', class Perfs extends Neptune.PackageNamespace
   @version: require('../../package.json').version
-require './Art/namespace';
-require './Art.Nano.Engine/namespace'
+require './Art.Nano.Engine/namespace';
+require './JavaScriptBaseline/namespace'
