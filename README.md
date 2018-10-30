@@ -9,7 +9,7 @@
 
 1. WebAsm
 2. 100% ArrayBuffer for everything except custom functions and non-enumerated strings
-3. Inline like hell, but still keep separate objects for each Element. 
+3. Inline like hell, but still keep separate objects for each Element. << so far this seems like a win
 
 I'm leaning towards option #3. It's the most maintainable and flexible, and probably still pretty performant. The goal is to reduce the number of objects to just the Elements and any custom functions. Some measurements suggest that could be as much as 10-12x reduction in current static objects (objects that exists to express a non-changing Element tree). The further goal is to eliminate all ArtAtomic objects generated dynamically in layout, drawing, and event handling.
 
